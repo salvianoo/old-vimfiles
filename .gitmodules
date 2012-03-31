@@ -1,0 +1,54 @@
+[submodule "bundle/tComment"]
+  path = bundle/tComment
+  url = git://github.com/tomtom/tcomment_vim.git
+[submodule "bundle/Command-T"]
+  path = bundle/Command-T
+  url = git://github.com/wincent/Command-T.git
+[submodule "bundle/vim-endwise"]
+  path = bundle/vim-endwise
+  url = git://github.com/tpope/vim-endwise.git
+[submodule "bundle/vim-rails"]
+  path = bundle/vim-rails
+  url = git://github.com/tpope/vim-rails.git
+[submodule "bundle/ack"]
+  path = bundle/ack
+  url = git://github.com/mileszs/ack.vim.git
+[submodule "bundle/NERD_tree"]
+  path = bundle/NERD_tree
+  url = git://github.com/scrooloose/nerdtree.git
+[submodule "bundle/vim-ragtag"]
+  path = bundle/vim-ragtag
+  url = git://github.com/tpope/vim-ragtag.git
+[submodule "bundle/snipmate.vim"]
+  path = bundle/snipmate.vim
+  url = git://github.com/msanders/snipmate.vim.git
+[submodule "bundle/vim-powerline"]
+  path = bundle/vim-powerline
+  url = git://github.com/Lokaltog/vim-powerline.git
+[submodule "bundle/vim-fugitive"]
+  path = bundle/vim-fugitive
+  url = git://github.com/tpope/vim-fugitive.git
+[submodule "bundle/syntastic"]
+  path = bundle/syntastic
+  url = https://github.com/scrooloose/syntastic.git
+[submodule "bundle/vim-scratch"]
+  path = bundle/vim-scratch
+  url = https://github.com/duff/vim-scratch.git
+[submodule "bundle/vim-colors-solarized"]
+  path = bundle/vim-colors-solarized
+  url = https://github.com/altercation/vim-colors-solarized
+[submodule "bundle/tslime.vim"]
+  path = bundle/tslime.vim
+  url = git://github.com/sjl/tslime.vim.git
+[submodule "bundle/vim-turbux"]
+  path = bundle/vim-turbux
+  url = git://github.com/jgdavey/vim-turbux.git
+[submodule "bundle/YankRing.vim"]
+  path = bundle/YankRing.vim
+  url = git://github.com/vim-scripts/YankRing.vim.git
+[submodule "bundle/gundo"]
+  path = bundle/gundo
+  url = git://github.com/sjl/gundo.vim.git
+[submodule "bundle/vim-extradite"]
+  path = bundle/vim-extradite
+  url = https://github.com/int3/vim-extradite.git
