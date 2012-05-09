@@ -26,7 +26,6 @@ set shell=/bin/bash
 
 set nowrap                      " do not wrap lines
 set textwidth=80
-set colorcolumn=+1              " this will highlight column 80
 set formatoptions=qrn1
 set scrolloff=3
 set ttyfast
@@ -35,6 +34,7 @@ set shiftwidth=2
 set expandtab                   " use spaces, not tabs
 set backspace=indent,eol,start  " backspace though everthing in insert mode
 set splitbelow
+" set colorcolumn=+1             " this will highlight column 80
 " }}}
 
 " UI {{{
@@ -48,6 +48,7 @@ set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,trail:·,nbsp:·
 " Font settings
 set t_Co=256
 set guifont=Menlo\ Regular\ for\ Powerline:h12
+" set guifont=Monaco:h12
 
 " Searching Settings {{{
 set hlsearch                    " highlight matches
@@ -78,8 +79,8 @@ let g:solarized_visibility='low'
 " Powerline fancy symbols
 let g:Powerline_symbols = 'fancy'
 
-" set background=dark
-set background=light
+set background=dark
+" set background=light
 
 if has("autocmd")
   filetype on                       " file type detection
@@ -98,7 +99,7 @@ if has("autocmd")
 
 endif
 
-" Folding ----------------------------------------------------------------- {{{
+" Folding {{{
 
 set foldlevelstart=0
 
@@ -283,6 +284,7 @@ noremap <c-o> :NERDTreeToggle<cr>
 " }}}
 
 " YankRing
+let g:yankring_manual_clipboard_check = 0
 nnoremap <c-y> :YRShow<CR>
 
 " Ack
