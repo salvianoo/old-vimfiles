@@ -18,7 +18,7 @@ set ruler                       " show the cursor position all
 set showcmd                     " show current mode down the bottom
 set autoindent                  " automatic indent new lines
 set smartindent                 " be smart about it
-" set nofoldenable
+set nofoldenable
 set shell=/bin/bash
 "}}}
 
@@ -286,6 +286,9 @@ noremap <c-o> :NERDTreeToggle<cr>
 " YankRing
 let g:yankring_manual_clipboard_check = 0
 nnoremap <c-y> :YRShow<CR>
+
+" Surround
+" let g:surround_insert_tail = "<++>"
 
 " Ack
 noremap <leader>a :Ack
