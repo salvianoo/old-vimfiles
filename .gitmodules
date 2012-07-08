@@ -53,5 +53,8 @@
   path = bundle/vim-extradite
   url = https://github.com/int3/vim-extradite.git
 [submodule "bundle/vim-surround"]
-	path = bundle/vim-surround
-	url = git://github.com/tpope/vim-surround.git
+  path = bundle/vim-surround
+  url = git://github.com/tpope/vim-surround.git
+[submodule "bundle/python-mode"]
+  path = bundle/python-mode
+  url = git://github.com/klen/python-mode.git

@@ -1,13 +1,20 @@
-" Load Pathogen {{{
+"  /===================================================\
+"  | Vimfiles by Salviano Ludgério                     |
+"  | - http://twitter.com/salvianoo                    |
+"  | Many tricks were stolen from Steve Losh dotfiles  |
+"  | - http://github.com/sjl/dotfiles                  |
+"  \===================================================/
+
+" Load Plugins {{{
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
+filetype plugin indent on
 set nocompatible                " no legacy vi
 "}}}
 
 " Basic Options {{{
 syntax on                       " turn on syntax highlighting
-
 set encoding=utf-8
 set noswapfile
 set modelines=0                 " security fix
@@ -20,10 +27,19 @@ set autoindent                  " automatic indent new lines
 set smartindent                 " be smart about it
 set nofoldenable
 set shell=/bin/bash
+set laststatus=2                " always show the status line
+set visualbell                  " stop annoying bells
+set cursorline                  " highlight cursor line
+set list
+
+" set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:·
+set listchars=tab:▸\ ,extends:❯,precedes:❮,trail:·,nbsp:·
+" set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,nbsp:·
+" set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,trail:·,nbsp:·
+
 "}}}
 
 " Text Formatting {{{
-
 set nowrap                      " do not wrap lines
 set textwidth=80
 set formatoptions=qrn1
@@ -35,20 +51,12 @@ set expandtab                   " use spaces, not tabs
 set backspace=indent,eol,start  " backspace though everthing in insert mode
 set splitbelow
 " set colorcolumn=+1             " this will highlight column 80
-" }}}
-
-" UI {{{
-set laststatus=2                " always show the status line
-set visualbell                  " stop annoying bells
-set cursorline                  " highlight cursor line
-set list
-set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,trail:·,nbsp:·
-" }}}
 
 " Font settings
 set t_Co=256
-set guifont=Menlo\ Regular\ for\ Powerline:h12
-" set guifont=Monaco:h12
+set guifont=Inconsolata-dz\ for\ Powerline:h12
+" set guifont=Menlo\ Regular\ for\ Powerline:h14
+" }}}
 
 " Searching Settings {{{
 set hlsearch                    " highlight matches
@@ -57,12 +65,12 @@ set showmatch
 set ignorecase                  " ignore case when searching...
 set smartcase                   " only if they contain at least one capital letter
 set gdefault
-"}}}
 
 " Basically this makes terminal Vim work sanely
 set notimeout
 set ttimeout
 set ttimeoutlen=50
+"}}}
 
 " Wildmenu Completion {{{
 set wildmenu                        " enable ctrl-n and ctrl-p to scroll thur matches
@@ -71,17 +79,37 @@ set wildmode=list:longest
 set wildignore+=.git                " Version control
 set wildignore+=*.aux,*.out,*.toc   " LaTeX intermediate files
 set wildignore+=*.DS_Store          " OSX bullshit
+
+set wildignore+=*.pyc               " Python bytecode
+
+" Clojure/Leiningen
+" set wildignore+=classes
+" set wildignore+=lib
 "}}}
 
-colorscheme solarized
-let g:solarized_visibility='low'
+" Line Return {{{
 
-" Powerline fancy symbols
-let g:Powerline_symbols = 'fancy'
+" Make sure Vim returns to the same line when you reopen a file.
+" Thanks, Amit and Steve Losh for this tip
+augroup line_return
+  au!
 
-set background=dark
-" set background=light
+  au BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \     execute 'normal! g`"zvzz' |
+      \ endif
+augroup END
+" }}}
 
+" Ruby {{{
+augroup ft_ruby
+  au!
+
+  au filetype ruby setlocal ts=2 sts=2 sw=2 expandtab
+augroup END
+" }}}
+
+" [TODO] AU CMD {{{
 if has("autocmd")
   filetype on                       " file type detection
   filetype plugin indent on
@@ -90,17 +118,15 @@ if has("autocmd")
   " styles depending on file type
   au filetype html set omnifunc=htmlcomplete#CompleteTags
   au filetype css set omnifunc=csscomplete#CompleteCSS
-  au filetype ruby setlocal ts=2 sts=2 sw=2 expandtab
-  au filetype java setlocal ts=4 sts=4 sw=4 expandtab
+  au filetype java setlocal ts=4 sts=4 sw=4 expandtab omnifunc=javacomplete#Complete
   au filetype javascript setlocal ts=4 sts=4 sw=4 expandtab
   au filetype python setlocal ts=4 sts=4 sw=4 expandtab
 
   autocmd BufWritePre *.java,*.yml,*.rb,*.html,*.css,*.erb :call <sid>StripTrailingWhitespaces()
-
 endif
+"}}}
 
 " Folding {{{
-
 set foldlevelstart=0
 
 set foldmethod=marker
@@ -138,6 +164,8 @@ set foldtext=MyFoldText() " }}}
 nnoremap n nzzzv
 nnoremap N Nzzzv
 
+" My Functions {{{
+
 " As seen on Vimcasts
 "
 function! <sid>StripTrailingWhitespaces()
@@ -161,10 +189,20 @@ function! <sid>BackgroundToggle()
   endif
 endfunction
 
+" my second vimscript function
+function! <sid>FontSizeToggle()
+  if &guifont == "Inconsolata-dz for Powerline:h12"
+    set guifont=Inconsolata-dz\ for\ Powerline:h16
+  else
+    set guifont=Inconsolata-dz\ for\ Powerline:h12
+  endif
+endfunction
+
 "--TODO--
 function! <sid>ShowDate()
   return system('date')
 endfunction
+" }}}
 
 " Remapping {{{
 
@@ -179,11 +217,10 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
 " Quick Editing {{{
-
 noremap <leader>ev <C-w>v<C-w>j:e ~/.vim/vimrc<cr>
 noremap <leader>ep <C-w>v<C-w>j:e ~/.pentadactylrc<cr>
 noremap <leader>et <C-w>v<C-w>j:e ~/.tmux.conf<cr>
-noremap <leader>eb <C-w>v<C-w>j:e ~/.bash<cr> 
+noremap <leader>eb <C-w>v<C-w>j:e ~/.bashrc<cr>
 " }}}
 
 " }}}
@@ -192,8 +229,9 @@ noremap <leader>eb <C-w>v<C-w>j:e ~/.bash<cr>
 " to directory of current file - http://vimcasts.org/e/14
 cnoremap %% <c-r>=expand('%:h').'/'<cr>
 
-" CommandT {{{
+" Plugins settings -------------------------------------------------------- {{{
 
+" CommandT {{{
 map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
 map <leader>F :CommandTFlush<cr>\|:CommandT %%<cr>
 map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
@@ -201,10 +239,14 @@ map <leader>gg :topleft 25 :split Gemfile<cr>
 
 let g:CommandTMaxHeight=12
 " let g:CommandTMatchWindowAtTop=1
+" }}}
 
-"}}}
+"MiniBufExplorer
+" let g:miniBufExplForceSyntaxEnable = 1
 
-" Function ShowRoutes
+" }}}
+
+" Function ShowRoutes {{{
 " thanks @garybernhardt
 function! ShowRoutes()
   " Requires 'scratch plugin
@@ -223,6 +265,7 @@ function! ShowRoutes()
   :normal dd
 endfunction
 map <leader>gR :call ShowRoutes()<cr>
+" }}}
 
 "faster shorcut for commenting. requires tComment
 map <leader>c <c-_><c-_>
@@ -247,8 +290,8 @@ nnoremap <leader><leader> <c-^>
 noremap ; :
 
 " Easily move to start/end of line:
-noremap H ^
-noremap L g_
+noremap <c-a> ^
+noremap <c-e> g_
 
 " Emacs binding in command line mode
 cnoremap <c-a> <home>
@@ -269,7 +312,8 @@ nnoremap <localleader>= ==
 vnoremap - =
 
 nnoremap <leader>W :call <sid>StripTrailingWhitespaces()<cr>
-nnoremap <leader>B :call <sid>BackgroundToggle()<cr>
+" nnoremap <leader>B :call <sid>BackgroundToggle()<cr>
+nnoremap <leader>B :call <sid>FontSizeToggle()<cr>
 
 "--TODO
 " nnoremap <leader>Y :call <sid>ShowDate()<cr>
@@ -315,23 +359,39 @@ augroup ft_fugitive
   au BufNewFile,BufRead .git/index setlocal nolist
 augroup END
 " }}}
-
-" Guard
+" Guard {{{
 augroup ft_guard
   au!
   au BufRead,BufNewFile Guardfile set ft=ruby
 augroup END
+" }}}
+" Vagrant {{{
+augroup ft_vagrant
+  au!
+  au BufRead,BufNewFile Vagrantfile set ft=ruby
+" }}}
+" CursorLine {{{
+" Only show cursorline in the current window and in normal mode
+augroup cline
+  au!
+  au WinLeave * set nocursorline
+  au WinEnter * set cursorline
+  au InsertEnter * set nocursorline
+  au InsertLeave * set cursorline
+augroup END
+" }}}
 
-" augroup cline
-"   au!
-"   au WinLeave * set nocursorline
-"   au WinEnter * set cursorline
-"   au InsertEnter * set nocursorline
-"   au InsertLeave * set cursorline
-" augroup END
+" GUI Options {{{
+color jellybeans
+" colorscheme solarized
+let g:solarized_visibility='low'
 
-"MiniBufExplorer
-" let g:miniBufExplForceSyntaxEnable = 1
+set background=dark
+" set background=light
+
+" Powerline fancy symbols
+let g:Powerline_symbols = 'fancy'
+let g:Powerline_cache_enabled = 1
 
 if has("gui_macvim")
   " Remove all the UI cruft
@@ -342,17 +402,21 @@ if has("gui_macvim")
   set go-=r
   set go-=R
 
-  " GUI
-  au GUIEnter * set fullscreen
+  set lines=57
+  set columns=237
 
+  " GUI
+  " set fuoptions=maxvert,maxhorz
+  " set fullscreen
 endif
+" }}}
 
 " Resize split when the window is resized
 au VimResized * exe "normal! \<c-w>="
 
 " Window rezising
-nnoremap <c-left> 5<c-w>>
-nnoremap <c-right> 5<c-w><
+nnoremap <Left> 4<c-w>>
+nnoremap <Right> 4<c-w><
 
 "it's 2012"
 noremap j gj
@@ -371,7 +435,6 @@ let g:tslime_normal_mapping = '<localleader>t'
 let g:tslime_visual_mapping = '<localleader>t'
 let g:tslime_vars_mapping = '<localleader>T'
 "}}}
-
 " Syntastic {{{
 let g:syntastic_enable_signs = 1
 let g:syntastic_check_on_open = 1
@@ -392,10 +455,21 @@ endif
 " }}}
 
 " Get off my lawn
-nnoremap <Left> :echoe "Use h"<CR>
-nnoremap <Right> :echoe "Use l"<CR>
+" nnoremap <Left> :echoe "Use h"<CR>
+" nnoremap <Right> :echoe "Use l"<CR>
 nnoremap <Up> :echoe "Use k"<CR>
 nnoremap <Down> :echoe "Use j"<CR>
 
 " Keep the cursor in place while joining lines
 nnoremap J mzJ`z
+
+" Python-Mode {{{
+
+let g:pymode_doc = 1
+let g:pymode_doc_key = '<localleader>ds'
+let g:pydoc = 'pydoc'
+let g:pymode_syntax = 1
+" let g:pymode_syntax_all = 0
+" let g:pymode_syntax_builtin_objs = 1
+" let
+" }}}
