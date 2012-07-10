@@ -32,9 +32,7 @@ set visualbell                  " stop annoying bells
 set cursorline                  " highlight cursor line
 set list
 
-" set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:·
-set listchars=tab:▸\ ,extends:❯,precedes:❮,trail:·,nbsp:·
-" set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,nbsp:·
+set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,nbsp:·
 " set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,trail:·,nbsp:·
 
 "}}}
@@ -52,10 +50,10 @@ set backspace=indent,eol,start  " backspace though everthing in insert mode
 set splitbelow
 " set colorcolumn=+1             " this will highlight column 80
 
-" Font settings
+" Font Settings
 set t_Co=256
-set guifont=Inconsolata-dz\ for\ Powerline:h12
-" set guifont=Menlo\ Regular\ for\ Powerline:h14
+set guifont=Menlo\ Regular\ for\ Powerline:h16
+" set guifont=Inconsolata-dz\ for\ Powerline:h12
 " }}}
 
 " Searching Settings {{{
@@ -105,9 +103,20 @@ augroup END
 augroup ft_ruby
   au!
 
-  au filetype ruby setlocal ts=2 sts=2 sw=2 expandtab
+  au Filetype ruby setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
 " }}}
+" Python {{{
+augroup ft_python
+  au!
+
+  au Filetype python setlocal ts=4 sts=4 sw=4 expandtab
+  au FileType python setlocal define=^\s*\\(def\\\\|class\\)
+  au FileType python compiler nose
+  au FileType man nnoremap <buffer> <cr> :q<cr>
+
+augroup END
+"}}}
 
 " [TODO] AU CMD {{{
 if has("autocmd")
@@ -120,7 +129,6 @@ if has("autocmd")
   au filetype css set omnifunc=csscomplete#CompleteCSS
   au filetype java setlocal ts=4 sts=4 sw=4 expandtab omnifunc=javacomplete#Complete
   au filetype javascript setlocal ts=4 sts=4 sw=4 expandtab
-  au filetype python setlocal ts=4 sts=4 sw=4 expandtab
 
   autocmd BufWritePre *.java,*.yml,*.rb,*.html,*.css,*.erb :call <sid>StripTrailingWhitespaces()
 endif
@@ -158,11 +166,6 @@ endfunction
 set foldtext=MyFoldText() " }}}
 
 " }}}
-
-"Keep search matches in the middle of the window and pulse the line when moving
-"to them.
-nnoremap n nzzzv
-nnoremap N Nzzzv
 
 " My Functions {{{
 
@@ -216,6 +219,11 @@ nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
+"Keep search matches in the middle of the window and pulse the line when moving
+"to them.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
 " Quick Editing {{{
 noremap <leader>ev <C-w>v<C-w>j:e ~/.vim/vimrc<cr>
 noremap <leader>ep <C-w>v<C-w>j:e ~/.pentadactylrc<cr>
@@ -243,6 +251,10 @@ let g:CommandTMaxHeight=12
 
 "MiniBufExplorer
 " let g:miniBufExplForceSyntaxEnable = 1
+
+" Makegreen {{{
+nnoremap \| :call MakeGreen('')<cr>
+" }}}
 
 " }}}
 
@@ -369,6 +381,17 @@ augroup END
 augroup ft_vagrant
   au!
   au BufRead,BufNewFile Vagrantfile set ft=ruby
+augroup END
+" }}}
+" Vim {{{
+augroup ft_vim
+  au!
+
+  au FileType vim setlocal foldmethod=marker
+  au FileType help setlocal textwidth=78
+  au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
+augroup END
+
 " }}}
 " CursorLine {{{
 " Only show cursorline in the current window and in normal mode
@@ -382,9 +405,10 @@ augroup END
 " }}}
 
 " GUI Options {{{
-color jellybeans
+color badwolf
+" color jellybeans
 " colorscheme solarized
-let g:solarized_visibility='low'
+" let g:solarized_visibility='low'
 
 set background=dark
 " set background=light
@@ -444,15 +468,15 @@ let g:syntastic_stl_format = '[%E{%e Errors}%B{, }%W{%w Warnings}]'
 " Substitute
 noremap <leader>s :%s//<left>
 
-" TMUX {{{
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-else
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
-" }}}
+" " TMUX {{{
+" if exists('$TMUX')
+"   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+"   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+" else
+"   let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+"   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+" endif
+" " }}}
 
 " Get off my lawn
 " nnoremap <Left> :echoe "Use h"<CR>

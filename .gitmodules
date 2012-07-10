@@ -58,3 +58,9 @@
 [submodule "bundle/python-mode"]
   path = bundle/python-mode
   url = git://github.com/klen/python-mode.git
+[submodule "bundle/nosecompiler"]
+  path = bundle/nosecompiler
+  url = git://github.com/olethanh/Vim-nosecompiler.git
+[submodule "bundle/makegreen"]
+  path = bundle/makegreen
+  url = git://github.com/reinh/vim-makegreen.git
