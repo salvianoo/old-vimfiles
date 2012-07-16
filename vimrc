@@ -33,7 +33,6 @@ set cursorline                  " highlight cursor line
 set list
 
 set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,nbsp:·
-" set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,trail:·,nbsp:·
 
 "}}}
 
@@ -99,6 +98,8 @@ augroup line_return
 augroup END
 " }}}
 
+" Filetype-specific ---------------------------------------------------------------- {{{
+
 " Ruby {{{
 augroup ft_ruby
   au!
@@ -106,6 +107,7 @@ augroup ft_ruby
   au Filetype ruby setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
 " }}}
+
 " Python {{{
 augroup ft_python
   au!
@@ -118,6 +120,59 @@ augroup ft_python
 augroup END
 "}}}
 
+" Javascript {{{
+augroup ft_javascript
+  au!
+
+  au Filetype javascript setlocal foldmethod=marker
+  au Filetype javascript setlocal foldmarker={,}
+  au Filetype javascript setlocal ts=4 sts=4 sw=4 expandtab
+
+  au FileType javascript inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
+augroup END
+" }}}
+
+" CSS {{{
+augroup ft_css
+  au!
+
+  au FileType css setlocal foldmethod=marker
+  au FileType css setlocal foldmarker={,}
+  au filetype css set omnifunc=csscomplete#CompleteCSS
+  " search wtf this line do
+  au FileType css setlocal iskeyword+=-
+
+  " Use <localleader>v to sort properties. Turns this:
+
+  "     p {
+  "         width: 200px;
+  "         height: 100px;
+  "         background: red;
+
+  "         ...
+  "     }
+  "
+  "into this:
+  "
+  "     p {
+  "         background: red;
+  "         height: 100px;
+  "         width: 200px;
+  "
+  "
+  "         ...
+  "     }
+  au FileType css noremap <buffer> <localleader>v ?{<CR>jV/\v^\s*\}?$<CR>k:sort<CR>:noh<CR>
+
+  " Make {<cr> insert a pair of brackets in such a way that the cursor is
+  " correctly positioned inside of them AND the following code doesn't get
+  " unfolded.
+  au FileType css inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
+
+augroup END
+
+" }}}
+
 " [TODO] AU CMD {{{
 if has("autocmd")
   filetype on                       " file type detection
@@ -126,12 +181,12 @@ if has("autocmd")
 
   " styles depending on file type
   au filetype html set omnifunc=htmlcomplete#CompleteTags
-  au filetype css set omnifunc=csscomplete#CompleteCSS
   au filetype java setlocal ts=4 sts=4 sw=4 expandtab omnifunc=javacomplete#Complete
-  au filetype javascript setlocal ts=4 sts=4 sw=4 expandtab
 
   autocmd BufWritePre *.java,*.yml,*.rb,*.html,*.css,*.erb :call <sid>StripTrailingWhitespaces()
 endif
+"}}}
+
 "}}}
 
 " Folding {{{
@@ -237,7 +292,7 @@ noremap <leader>eb <C-w>v<C-w>j:e ~/.bashrc<cr>
 " to directory of current file - http://vimcasts.org/e/14
 cnoremap %% <c-r>=expand('%:h').'/'<cr>
 
-" Plugins settings -------------------------------------------------------- {{{
+" Plugins settings ---------------------------------------------------------------- {{{
 
 " CommandT {{{
 map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
@@ -253,7 +308,47 @@ let g:CommandTMaxHeight=12
 " let g:miniBufExplForceSyntaxEnable = 1
 
 " Makegreen {{{
-nnoremap \| :call MakeGreen('')<cr>
+" nnoremap \| :call MakeGreen('')<cr>
+" }}}
+
+" Ctrl-P {{{
+
+let g:ctrlp_dont_split = 'NERD_tree_2'
+let g:ctrlp_jump_to_buffer = 0
+" let g:ctrlp_map = '<leader>,'
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_match_window_reversed = 1
+let g:ctrlp_split_window = 0
+let g:ctrlp_max_height = 20
+let g:ctrlp_extensions = ['tag']
+
+let g:ctrlp_prompt_mappings = {
+      \ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
+      \ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
+      \ 'PrtHistory("-1")':     ['<c-n>'],
+      \ 'PrtHistory("1")':      ['<c-p>'],
+      \ 'ToggleFocus()':        ['<c-tab>'],
+      \ }
+
+let ctrlp_filter_greps = "" .
+      \ "egrep -iv '\\.(" .
+      \ "jar|class|swp|swo|log|so|o|pyc|jpe?g|png|gif|mo|po" .
+      \ ")$' | " .
+      \ "egrep -v '^(\\./)?(" .
+      \ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/" .
+      \ ")'"
+
+let my_ctrlp_user_command = "" .
+      \ "find %s '(' -type f ')' -maxdepth 15 -not -path '*/\\.*/*' | " .
+      \ ctrlp_filter_greps
+
+let my_ctrlp_git_command = "" .
+      \ "cd %s && git ls-files | " .
+      \ ctrlp_filter_greps
+
+let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command]
+
+nnoremap <leader><cr> :silent !/usr/local/bin/ctags -R . tags<cr>:redraw!<cr>
 " }}}
 
 " }}}
@@ -405,12 +500,10 @@ augroup END
 " }}}
 
 " GUI Options {{{
-color badwolf
-" color jellybeans
-" colorscheme solarized
+set background=dark
+colorscheme badwolf
 " let g:solarized_visibility='low'
 
-set background=dark
 " set background=light
 
 " Powerline fancy symbols
@@ -462,13 +555,15 @@ let g:tslime_vars_mapping = '<localleader>T'
 " Syntastic {{{
 let g:syntastic_enable_signs = 1
 let g:syntastic_check_on_open = 1
+let g:syntastic_disabled_filetypes = ['html', 'rst']
 let g:syntastic_stl_format = '[%E{%e Errors}%B{, }%W{%w Warnings}]'
+let g:syntastic_sjl_conf = '$HOME/.vim/jsl.conf'
 "}}}
 
 " Substitute
 noremap <leader>s :%s//<left>
 
-" " TMUX {{{
+" TMUX {{{
 " if exists('$TMUX')
 "   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
 "   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
@@ -476,7 +571,7 @@ noremap <leader>s :%s//<left>
 "   let &t_SI = "\<Esc>]50;CursorShape=1\x7"
 "   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 " endif
-" " }}}
+" }}}
 
 " Get off my lawn
 " nnoremap <Left> :echoe "Use h"<CR>
@@ -496,4 +591,22 @@ let g:pymode_syntax = 1
 " let g:pymode_syntax_all = 0
 " let g:pymode_syntax_builtin_objs = 1
 " let
+" }}}
+
+" Error Toggles {{{
+
+command! ErrorsToggle call ErrorsToggle()
+function! ErrorsToggle() " {{{
+  if exists("w:is_error_window")
+    unlet w:is_error_window
+    exec "q"
+  else
+    exec "Errors"
+    lopen
+    let w:is_error_window = 1
+  endif
+endfunction " }}}
+
+nmap <silent> <f3> :ErrorsToggle<cr>
+
 " }}}
