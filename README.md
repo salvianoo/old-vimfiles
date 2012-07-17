@@ -7,3 +7,8 @@ Install
 
     git submodule init
     git submodule update
+
+VIM
+===
+
+You will need a compiled vim with python and ruby support
