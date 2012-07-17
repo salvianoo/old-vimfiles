@@ -302,7 +302,7 @@ map <leader>gg :topleft 25 :split Gemfile<cr>
 
 let g:CommandTMaxHeight=12
 " let g:CommandTMatchWindowAtTop=1
-" }}}
+"}}}
 
 "MiniBufExplorer
 " let g:miniBufExplForceSyntaxEnable = 1
