@@ -79,6 +79,8 @@ set wildignore+=*.DS_Store          " OSX bullshit
 
 set wildignore+=*.pyc               " Python bytecode
 
+set wildignore+=*.class             " Java bytecode
+
 " Clojure/Leiningen
 " set wildignore+=classes
 " set wildignore+=lib
@@ -116,7 +118,15 @@ augroup ft_python
   au FileType python setlocal define=^\s*\\(def\\\\|class\\)
   au FileType python compiler nose
   au FileType man nnoremap <buffer> <cr> :q<cr>
+augroup END
+"}}}
 
+" Django {{{
+augroup ft_django
+  au!
+
+  au BufNewFile,BufRead urls.py   setlocal nowrap
+  au BufNewFile,BufRead urls.py   normal! zR
 augroup END
 "}}}
 
@@ -138,7 +148,7 @@ augroup ft_css
 
   au FileType css setlocal foldmethod=marker
   au FileType css setlocal foldmarker={,}
-  au filetype css set omnifunc=csscomplete#CompleteCSS
+  au Filetype css set omnifunc=csscomplete#CompleteCSS
   " search wtf this line do
   au FileType css setlocal iskeyword+=-
 
@@ -173,6 +183,16 @@ augroup END
 
 " }}}
 
+" Java {{{
+augroup ft_java
+  " au Filetype java setlocal ts=4 sts=4 sw=4 expandtab omnifunc=javacomplete#Complete
+  au Filetype java setlocal ts=4 sts=4 sw=4 expandtab
+  au Filetype java setlocal foldmethod=marker
+  au Filetype java setlocal foldmarker={,}
+  au Filetype java setlocal foldlevel=0
+augroup END
+" }}}
+
 " [TODO] AU CMD {{{
 if has("autocmd")
   filetype on                       " file type detection
@@ -181,7 +201,6 @@ if has("autocmd")
 
   " styles depending on file type
   au filetype html set omnifunc=htmlcomplete#CompleteTags
-  au filetype java setlocal ts=4 sts=4 sw=4 expandtab omnifunc=javacomplete#Complete
 
   autocmd BufWritePre *.java,*.yml,*.rb,*.html,*.css,*.erb :call <sid>StripTrailingWhitespaces()
 endif
@@ -219,6 +238,24 @@ function! MyFoldText() " {{{
     return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . "…" . ' '
 endfunction
 set foldtext=MyFoldText() " }}}
+
+" Java Folding {{{
+" Javadoc comments (/** and */ pairs) and code sections (marked by {} pairs)
+" mark the start and end of folds.
+" All other lines simply take the fold level that is going so far.
+function! MyFoldLevel( lineNumber )
+  let thisLine = getline( a:lineNumber )
+  " Don't create fold if entire Javadoc comment or {} pair is on one line.
+  if ( thisLine =~ '\%(\%(/\*\*\).*\%(\*/\)\)\|\%({.*}\)' )
+    return '='
+  elseif ( thisLine =~ '\%(^\s*/\*\*\s*$\)\|{' )
+    return "a1"
+  elseif ( thisLine =~ '\%(^\s*\*/\s*$\)\|}' )
+    return "s1"
+  endif
+  return '='
+endfunction
+" }}}
 
 " }}}
 
@@ -348,7 +385,15 @@ let my_ctrlp_git_command = "" .
 
 let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command]
 
-nnoremap <leader><cr> :silent !/usr/local/bin/ctags -R . tags<cr>:redraw!<cr>
+nnoremap <leader>. :CtrlPTag<cr>
+" Alterar path do ctags com homebrew
+nnoremap <leader><cr> :silent !/usr/local/Cellar/ctags/5.8/bin/ctags -R . tags<cr>:redraw!<cr>
+" }}}
+
+" SuperTab {{{
+let g:SuperTabDefaultCompletionType = "<c-n>"
+let g:SuperTabLongestHighlight = 1
+let g:SuperTabCrMapping = 1
 " }}}
 
 " }}}
@@ -562,16 +607,6 @@ let g:syntastic_sjl_conf = '$HOME/.vim/jsl.conf'
 
 " Substitute
 noremap <leader>s :%s//<left>
-
-" TMUX {{{
-" if exists('$TMUX')
-"   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-"   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-" else
-"   let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-"   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-" endif
-" }}}
 
 " Get off my lawn
 " nnoremap <Left> :echoe "Use h"<CR>
