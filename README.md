@@ -11,4 +11,4 @@ Install
 VIM
 ===
 
-You will need a compiled vim with python and ruby support
+You will need a compiled Vim with python and ruby support

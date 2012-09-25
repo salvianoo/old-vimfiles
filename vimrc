@@ -142,15 +142,18 @@ augroup ft_javascript
 augroup END
 " }}}
 
-" CSS {{{
+" CSS, SCSS and Less {{{
 augroup ft_css
   au!
 
-  au FileType css setlocal foldmethod=marker
-  au FileType css setlocal foldmarker={,}
-  au Filetype css set omnifunc=csscomplete#CompleteCSS
+  au BufNewFile,BufRead *.less setlocal filetype=less
+  au BufNewFile,BufRead *.scss setlocal filetype=scss
+
+  au FileType css,scss,less setlocal foldmethod=marker
+  au FileType css,scss,less setlocal foldmarker={,}
+  au Filetype css,scss,less set omnifunc=csscomplete#CompleteCSS
   " search wtf this line do
-  au FileType css setlocal iskeyword+=-
+  au FileType css,scss,less setlocal iskeyword+=-
 
   " Use <localleader>v to sort properties. Turns this:
 
@@ -172,12 +175,12 @@ augroup ft_css
   "
   "         ...
   "     }
-  au FileType css noremap <buffer> <localleader>v ?{<CR>jV/\v^\s*\}?$<CR>k:sort<CR>:noh<CR>
+  au FileType *.css,*.scss,*.less noremap <buffer> <localleader>v ?{<CR>jV/\v^\s*\}?$<CR>k:sort<CR>:noh<CR>
 
   " Make {<cr> insert a pair of brackets in such a way that the cursor is
   " correctly positioned inside of them AND the following code doesn't get
   " unfolded.
-  au FileType css inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
+  au FileType *.css,*.scss,*.less inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
 
 augroup END
 
@@ -202,7 +205,7 @@ if has("autocmd")
   " styles depending on file type
   au filetype html set omnifunc=htmlcomplete#CompleteTags
 
-  autocmd BufWritePre *.java,*.yml,*.rb,*.html,*.css,*.erb :call <sid>StripTrailingWhitespaces()
+  autocmd BufWritePre *.java,*.yml,*.rb,*.html,*.css,*.scss,*.erb :call <sid>StripTrailingWhitespaces()
 endif
 "}}}
 
@@ -332,12 +335,12 @@ cnoremap %% <c-r>=expand('%:h').'/'<cr>
 " Plugins settings ---------------------------------------------------------------- {{{
 
 " CommandT {{{
-map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
-map <leader>F :CommandTFlush<cr>\|:CommandT %%<cr>
-map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
+" map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
+" map <leader>F :CommandTFlush<cr>\|:CommandT %%<cr>
+" map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
 map <leader>gg :topleft 25 :split Gemfile<cr>
 
-let g:CommandTMaxHeight=12
+" let g:CommandTMaxHeight=12
 " let g:CommandTMatchWindowAtTop=1
 "}}}
 

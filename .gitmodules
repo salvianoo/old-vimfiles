@@ -1,9 +1,6 @@
 [submodule "bundle/tComment"]
   path = bundle/tComment
   url = git://github.com/tomtom/tcomment_vim.git
-[submodule "bundle/Command-T"]
-  path = bundle/Command-T
-  url = git://github.com/wincent/Command-T.git
 [submodule "bundle/vim-endwise"]
   path = bundle/vim-endwise
   url = git://github.com/tpope/vim-endwise.git
@@ -71,8 +68,8 @@
   path = bundle/ctrlp.vim
   url = git://github.com/kien/ctrlp.vim.git
 [submodule "bundle/markdown"]
-	path = bundle/markdown
-	url = git://github.com/tpope/vim-markdown.git
+  path = bundle/markdown
+  url = git://github.com/tpope/vim-markdown.git
 [submodule "bundle/supertab"]
-	path = bundle/supertab
-	url = git://github.com/ervandew/supertab.git
+  path = bundle/supertab
+  url = git://github.com/ervandew/supertab.git
