@@ -549,10 +549,8 @@ augroup END
 
 " GUI Options {{{
 set background=dark
+let g:badwolf_html_link_underline=0
 colorscheme badwolf
-" let g:solarized_visibility='low'
-
-" set background=light
 
 " Powerline fancy symbols
 let g:Powerline_symbols = 'fancy'
@@ -571,6 +569,7 @@ if has("gui_macvim")
   set columns=237
 
   " GUI
+  colorscheme codeschool
   " set fuoptions=maxvert,maxhorz
   " set fullscreen
 endif
