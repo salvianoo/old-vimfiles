@@ -105,11 +105,9 @@ augroup END
 " Ruby {{{
 augroup ft_ruby
   au!
-
   au Filetype ruby setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
 " }}}
-
 " Python {{{
 augroup ft_python
   au!
@@ -120,7 +118,6 @@ augroup ft_python
   au FileType man nnoremap <buffer> <cr> :q<cr>
 augroup END
 "}}}
-
 " Django {{{
 augroup ft_django
   au!
@@ -129,7 +126,6 @@ augroup ft_django
   au BufNewFile,BufRead urls.py   normal! zR
 augroup END
 "}}}
-
 " Javascript {{{
 augroup ft_javascript
   au!
@@ -141,7 +137,6 @@ augroup ft_javascript
   au FileType javascript inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
 augroup END
 " }}}
-
 " CSS, SCSS and Less {{{
 augroup ft_css
   au!
@@ -185,7 +180,6 @@ augroup ft_css
 augroup END
 
 " }}}
-
 " Java {{{
 augroup ft_java
   " au Filetype java setlocal ts=4 sts=4 sw=4 expandtab omnifunc=javacomplete#Complete
@@ -194,6 +188,14 @@ augroup ft_java
   au Filetype java setlocal foldmarker={,}
   au Filetype java setlocal foldlevel=0
 augroup END
+" }}}
+" Lisp {{{
+
+augroup ft_lisp
+  au!
+  au FileType lisp call TurnOnLispFolding()
+augroup END
+
 " }}}
 
 " [TODO] AU CMD {{{
@@ -350,7 +352,6 @@ map <leader>gg :topleft 25 :split Gemfile<cr>
 " Makegreen {{{
 " nnoremap \| :call MakeGreen('')<cr>
 " }}}
-
 " Ctrl-P {{{
 
 let g:ctrlp_dont_split = 'NERD_tree_2'
@@ -392,7 +393,6 @@ nnoremap <leader>. :CtrlPTag<cr>
 " Alterar path do ctags com homebrew
 nnoremap <leader><cr> :silent !/usr/local/Cellar/ctags/5.8/bin/ctags -R . tags<cr>:redraw!<cr>
 " }}}
-
 " SuperTab {{{
 let g:SuperTabDefaultCompletionType = "<c-n>"
 let g:SuperTabLongestHighlight = 1
@@ -627,7 +627,12 @@ let g:pydoc = 'pydoc'
 let g:pymode_syntax = 1
 " let g:pymode_syntax_all = 0
 " let g:pymode_syntax_builtin_objs = 1
-" let
+" let g:pymode_syntax_space_errors = 0
+" let g:pymode_folding = 0
+
+let g:pymode_rope = 1
+let g:pymode_rope_global_prefix = "<localleader>R"
+let g:pymode_rope_local_prefix = "<localleader>r"
 " }}}
 
 " Error Toggles {{{

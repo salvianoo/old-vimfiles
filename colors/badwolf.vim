@@ -499,6 +499,22 @@ call HL('pythonPrecondit', 'lime', '', 'none')
 call HL('pythonDecorator',  'taffy', '', 'none')
 
 " }}}
+" Ruby {{{
+call HL('rubyClass', 'taffy', '', 'none')
+call HL('rubyDefine', 'taffy', '', 'none')
+call HL('rubySymbol', 'dress', '', 'none')
+call HL('rubyPseudoVariable', 'dress', '', 'bold')
+call HL('rubyStringEscape', 'dress', '', 'none')
+call HL('rubyStringDelimiter', 'dirtyblonde', '', 'none')
+call HL('rubyBoolean', 'dress', '', 'none')
+call HL('rubyInterpolationDelimiter', 'lime', '', 'none')
+call HL('rubyRegexp', 'dress', '', 'none')
+call HL('rubyRegexpSpecial', 'taffy', '', 'none')
+
+
+call HL('Type', 'orange', '', 'none')
+
+" }}}
 " SLIMV {{{
 
 " Rainbow parentheses
