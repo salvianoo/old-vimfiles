@@ -5,16 +5,17 @@
 "  | - http://github.com/sjl/dotfiles                  |
 "  \===================================================/
 
-" Load Plugins {{{
+" Preamble ----------------------------------------------------------------- {{{
+
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 filetype plugin indent on
 set nocompatible                " no legacy vi
-"}}}
 
-" Basic Options {{{
-syntax on                       " turn on syntax highlighting
+"}}}
+" Basic Options ------------------------------------------------------------ {{{
+
 set encoding=utf-8
 set noswapfile
 set modelines=0                 " security fix
@@ -22,6 +23,7 @@ set hidden                      " allow switching edited buffers without saving
 set history=100
 set number
 set ruler                       " show the cursor position all
+set ttyfast
 set showcmd                     " show current mode down the bottom
 set autoindent                  " automatic indent new lines
 set smartindent                 " be smart about it
@@ -31,45 +33,34 @@ set laststatus=2                " always show the status line
 set visualbell                  " stop annoying bells
 set cursorline                  " highlight cursor line
 set list
-
-set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮,nbsp:·
-
-"}}}
-
-" Text Formatting {{{
-set nowrap                      " do not wrap lines
-set textwidth=80
-set formatoptions=qrn1
+set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
 set scrolloff=3
-set ttyfast
-set softtabstop=2               " yep, two
-set shiftwidth=2
-set expandtab                   " use spaces, not tabs
 set backspace=indent,eol,start  " backspace though everthing in insert mode
 set splitbelow
-" set colorcolumn=+1             " this will highlight column 80
-
-" Font Settings
-set t_Co=256
-set guifont=Menlo\ Regular\ for\ Powerline:h16
-" set guifont=Inconsolata-dz\ for\ Powerline:h12
-" }}}
-
-" Searching Settings {{{
-set hlsearch                    " highlight matches
-set incsearch                   " do incremental searching
-set showmatch
-set ignorecase                  " ignore case when searching...
-set smartcase                   " only if they contain at least one capital letter
-set gdefault
 
 " Basically this makes terminal Vim work sanely
 set notimeout
 set ttimeout
 set ttimeoutlen=50
-"}}}
 
+" Better Completion
+set completeopt=menu,preview,longest
+
+" Resize split when the window is resized
+au VimResized * exe "normal! \<c-w>="
+
+" CursorLine {{{
+" Only show cursorline in the current window and in normal mode
+
+augroup cline
+  au!
+  au WinLeave,InsertEnter * set nocursorline
+  au WinEnter,InsertLeave * set cursorline
+augroup END
+
+" }}}
 " Wildmenu Completion {{{
+
 set wildmenu                        " enable ctrl-n and ctrl-p to scroll thur matches
 set wildmode=list:longest
 
@@ -84,49 +75,221 @@ set wildignore+=*.class             " Java bytecode
 " Clojure/Leiningen
 " set wildignore+=classes
 " set wildignore+=lib
-"}}}
 
+" }}}
 " Line Return {{{
 
 " Make sure Vim returns to the same line when you reopen a file.
 " Thanks, Amit and Steve Losh for this tip
 augroup line_return
   au!
-
   au BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \     execute 'normal! g`"zvzz' |
       \ endif
 augroup END
+
+" }}}
+" Tabs, spaces, wrapping {{{
+
+set shiftwidth=2
+set softtabstop=2               " yep, two
+set expandtab                   " use spaces, not tabs
+set nowrap                      " do not wrap lines
+set textwidth=80
+set formatoptions=qrn1
+set colorcolumn=+1             " this will highlight column 80
+
+" }}}
+" Leader {{{
+
+" Use comma as <leader> key instead of backslash
+let mapleader = ","
+let maplocalleader = "\\"
+
+" }}}
+" Color scheme {{{
+
+syntax on                       " turn on syntax highlighting
+set background=dark
+" let g:badwolf_tabline = 2
+let g:badwolf_html_link_underline=0
+colorscheme badwolf
+
 " }}}
 
-" Filetype-specific ---------------------------------------------------------------- {{{
+" }}}
+" Convenience mappings ----------------------------------------------------- {{{
+
+" Space is so much easier than :
+noremap ; :
+
+inoremap jj <esc>
+
+noremap vv ^vg_
+
+" Keep the cursor in place while joining lines
+nnoremap J mzJ`z
+
+" Emacs binding in command line mode
+cnoremap <c-a> <home>
+cnoremap <c-e> <end>
+
+" Substitute
+noremap <leader>s :%s//<left>
+
+"make <c-l> clear the highlight as well as redraw
+nnoremap <leader><space> :nohls<cr>
+
+" Map hashrocket as textmate
+imap <c-l> <space>=><space>
+
+"I like that
+nnoremap <localleader>= ==
+vnoremap - =
+
+" not sure to use this
+" inoremap <c-space> <c-x><c-u>
+
+" As see on vimcast about edit command
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+map <leader>ew :e %%
+
+" Expanded to directory of current file in command mode
+" http://vimcasts.org/e/14
+cnoremap %% <c-r>=expand('%:h').'/'<cr>
+
+" Get off my lawn
+" nnoremap <Left> :echoe "Use h"<CR>
+" nnoremap <Right> :echoe "Use l"<CR>
+nnoremap <Up> :echoe "Use k"<CR>
+nnoremap <Down> :echoe "Use j"<CR>
+
+"normal mode
+" nnoremap <tab> %
+"visual mode
+" vnoremap <tab> %
+
+"shortuct for editing vimrc file in a new
+" nmap ,ev :tabedit ~/.vim/vimrc<cr>
+
+" Send visual selection to gist.github.com as a private, filetyped Gist
+" Requires the gist command line too (brew install gist)
+" vnoremap <leader>G :w !gist -t %:e \| pbcopy<cr>
+" vnoremap <leader>UG :w !gist -p \| pbcopy<cr>
+
+" }}}
+" Quick Editing ------------------------------------------------------------ {{{
+
+noremap <leader>ev <C-w>v<C-w>j:e ~/.vim/vimrc<cr>
+noremap <leader>ep <C-w>v<C-w>j:e ~/.pentadactylrc<cr>
+noremap <leader>et <C-w>v<C-w>j:e ~/.tmux.conf<cr>
+noremap <leader>eb <C-w>v<C-w>j:e ~/.bashrc<cr>
+
+" }}}
+" Searching and movement --------------------------------------------------- {{{
+
+set ignorecase                  " ignore case when searching...
+set smartcase                   " only if they contain at least one capital letter
+set incsearch                   " do incremental searching
+set showmatch
+set hlsearch                    " highlight matches
+set gdefault
+
+"Keep search matches in the middle of the window and pulse the line when moving
+"to them.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" Easier navigation betwen split windows
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+"it's 2012"
+noremap j gj
+noremap k gk
+
+" Switch between the currently open buffer and the previous one
+nnoremap <leader><leader> <c-^>
+
+" Window rezising
+nnoremap <c-a> 4<c-w>>
+nnoremap <c-e> 4<c-w><
+
+" Easily move to start/end of line:
+" noremap <c-a> ^
+" noremap <c-e> g_
+
+"}}}
+" Folding -------------------------------------------------------------------{{{
+
+set foldlevelstart=0
+
+set foldmethod=marker
+" set foldnestmax=3
+" set foldlevelstart=0
+
+" Space to toggle folds
+nnoremap <Space> za
+vnoremap <Space> za
+
+nnoremap zO zCzO
+
+function! MyFoldText() " {{{
+    let line = getline(v:foldstart)
+
+    let nucolwidth = &fdc + &number * &numberwidth
+    let windowwidth = winwidth(0) - nucolwidth - 3
+
+    let foldedlinecount = v:foldend - v:foldstart
+
+    " expand tabs into spaces
+    let onetab = strpart('          ', 0, &tabstop)
+    let line = substitute(line, '\t', onetab, 'g')
+
+    let livpjune = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
+    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
+    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . "…" . ' '
+endfunction
+set foldtext=MyFoldText() " }}}
+
+" }}}
+" Filetype-specific -------------------------------------------------------- {{{
 
 " Ruby {{{
+
 augroup ft_ruby
   au!
   au Filetype ruby setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
+
 " }}}
 " Python {{{
+
 augroup ft_python
   au!
 
-  au Filetype python setlocal ts=4 sts=4 sw=4 expandtab
   au FileType python setlocal define=^\s*\\(def\\\\|class\\)
-  au FileType python compiler nose
   au FileType man nnoremap <buffer> <cr> :q<cr>
+
+  au Filetype python setlocal ts=4 sts=4 sw=4 expandtab
 augroup END
+
 "}}}
 " Django {{{
+
 augroup ft_django
   au!
 
   au BufNewFile,BufRead urls.py   setlocal nowrap
   au BufNewFile,BufRead urls.py   normal! zR
 augroup END
+
 "}}}
 " Javascript {{{
+
 augroup ft_javascript
   au!
 
@@ -136,8 +299,10 @@ augroup ft_javascript
 
   au FileType javascript inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
 augroup END
+
 " }}}
 " CSS, SCSS and Less {{{
+
 augroup ft_css
   au!
 
@@ -181,6 +346,7 @@ augroup END
 
 " }}}
 " Java {{{
+
 augroup ft_java
   " au Filetype java setlocal ts=4 sts=4 sw=4 expandtab omnifunc=javacomplete#Complete
   au Filetype java setlocal ts=4 sts=4 sw=4 expandtab
@@ -188,6 +354,7 @@ augroup ft_java
   au Filetype java setlocal foldmarker={,}
   au Filetype java setlocal foldlevel=0
 augroup END
+
 " }}}
 " Lisp {{{
 
@@ -197,8 +364,24 @@ augroup ft_lisp
 augroup END
 
 " }}}
+" C {{{
 
+augroup ft_c
+  au Filetype c setlocal foldmethod=marker
+  au Filetype c setlocal foldmarker={,}
+augroup END
+
+" }}}
+" C# {{{
+
+augroup ft_cs
+  au Filetype cs setlocal foldmethod=marker
+  au Filetype cs setlocal foldmarker={,}
+augroup END
+
+" }}}
 " [TODO] AU CMD {{{
+
 if has("autocmd")
   filetype on                       " file type detection
   filetype plugin indent on
@@ -209,134 +392,63 @@ if has("autocmd")
 
   autocmd BufWritePre *.java,*.yml,*.rb,*.html,*.css,*.scss,*.erb :call <sid>StripTrailingWhitespaces()
 endif
-"}}}
 
 "}}}
-
-" Folding {{{
-set foldlevelstart=0
-
-set foldmethod=marker
-" set foldnestmax=3
-" set foldlevelstart=0
-
-" Space to toggle folds
-nnoremap <Space> za
-vnoremap <Space> za
-
-nnoremap zO zCzO
-
-function! MyFoldText() " {{{
-    let line = getline(v:foldstart)
-
-    let nucolwidth = &fdc + &number * &numberwidth
-    let windowwidth = winwidth(0) - nucolwidth - 3
-
-    let foldedlinecount = v:foldend - v:foldstart
-
-    " expand tabs into spaces
-    let onetab = strpart('          ', 0, &tabstop)
-    let line = substitute(line, '\t', onetab, 'g')
-
-    let livpjune = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
-    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
-    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . "…" . ' '
-endfunction
-set foldtext=MyFoldText() " }}}
-
-" Java Folding {{{
-" Javadoc comments (/** and */ pairs) and code sections (marked by {} pairs)
-" mark the start and end of folds.
-" All other lines simply take the fold level that is going so far.
-function! MyFoldLevel( lineNumber )
-  let thisLine = getline( a:lineNumber )
-  " Don't create fold if entire Javadoc comment or {} pair is on one line.
-  if ( thisLine =~ '\%(\%(/\*\*\).*\%(\*/\)\)\|\%({.*}\)' )
-    return '='
-  elseif ( thisLine =~ '\%(^\s*/\*\*\s*$\)\|{' )
-    return "a1"
-  elseif ( thisLine =~ '\%(^\s*\*/\s*$\)\|}' )
-    return "s1"
-  endif
-  return '='
-endfunction
+" Guard {{{
+augroup ft_guard
+  au!
+  au BufRead,BufNewFile Guardfile set ft=ruby
+augroup END
 " }}}
-
+" Vagrant {{{
+augroup ft_vagrant
+  au!
+  au BufRead,BufNewFile Vagrantfile set ft=ruby
+augroup END
 " }}}
-
-" My Functions {{{
-
-" As seen on Vimcasts
+" Vim {{{
 "
-function! <sid>StripTrailingWhitespaces()
-  " preparation save last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " do the business:
-  %s/\s\+$//e
-  " clean up: restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
+augroup ft_vim
+  au!
 
-" my first vimscript function
-function! <sid>BackgroundToggle()
-  if &background == "dark"
-    set background=light
-  else
-    set background=dark
-  endif
-endfunction
-
-" my second vimscript function
-function! <sid>FontSizeToggle()
-  if &guifont == "Inconsolata-dz for Powerline:h12"
-    set guifont=Inconsolata-dz\ for\ Powerline:h16
-  else
-    set guifont=Inconsolata-dz\ for\ Powerline:h12
-  endif
-endfunction
-
-"--TODO--
-function! <sid>ShowDate()
-  return system('date')
-endfunction
-" }}}
-
-" Remapping {{{
-
-" Use comma as <leader> key instead of backslash
-let mapleader=","
-let maplocalleader="\\"
-
-" Easier navigation betwen split windows
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-
-"Keep search matches in the middle of the window and pulse the line when moving
-"to them.
-nnoremap n nzzzv
-nnoremap N Nzzzv
-
-" Quick Editing {{{
-noremap <leader>ev <C-w>v<C-w>j:e ~/.vim/vimrc<cr>
-noremap <leader>ep <C-w>v<C-w>j:e ~/.pentadactylrc<cr>
-noremap <leader>et <C-w>v<C-w>j:e ~/.tmux.conf<cr>
-noremap <leader>eb <C-w>v<C-w>j:e ~/.bashrc<cr>
-" }}}
+  au FileType vim setlocal foldmethod=marker
+  au FileType help setlocal textwidth=78
+  au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
+augroup END
 
 " }}}
+" Treetop-files {{{
 
-" double percentage sign in command mode is expanded
-" to directory of current file - http://vimcasts.org/e/14
-cnoremap %% <c-r>=expand('%:h').'/'<cr>
+set runtimepath+=~/.vim/plugin/treetop.vim
 
-" Plugins settings ---------------------------------------------------------------- {{{
+"}}}
 
+"}}}
+" Plugins settings --------------------------------------------------------- {{{
+
+" Ack {{{
+
+noremap <leader>a :Ack
+
+"}}}
+" NERDTree {{{
+
+let NERDTreeHighlightCursorline=1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+
+au FileType nerdtree setlocal nolist
+noremap <c-o> :NERDTreeToggle<cr>
+
+" }}}
+" YankRing {{{
+
+let g:yankring_manual_clipboard_check = 0
+nnoremap <c-y> :YRShow<CR>
+
+"}}}
 " CommandT {{{
+
 " map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
 " map <leader>F :CommandTFlush<cr>\|:CommandT %%<cr>
 " map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
@@ -344,14 +456,8 @@ map <leader>gg :topleft 25 :split Gemfile<cr>
 
 " let g:CommandTMaxHeight=12
 " let g:CommandTMatchWindowAtTop=1
+
 "}}}
-
-"MiniBufExplorer
-" let g:miniBufExplForceSyntaxEnable = 1
-
-" Makegreen {{{
-" nnoremap \| :call MakeGreen('')<cr>
-" }}}
 " Ctrl-P {{{
 
 let g:ctrlp_dont_split = 'NERD_tree_2'
@@ -392,17 +498,146 @@ let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command
 nnoremap <leader>. :CtrlPTag<cr>
 " Alterar path do ctags com homebrew
 nnoremap <leader><cr> :silent !/usr/local/Cellar/ctags/5.8/bin/ctags -R . tags<cr>:redraw!<cr>
+
 " }}}
 " SuperTab {{{
+
 let g:SuperTabDefaultCompletionType = "<c-n>"
 let g:SuperTabLongestHighlight = 1
 let g:SuperTabCrMapping = 1
+
 " }}}
+" Lisp {{{
+let g:lisp_rainbow = 1
+let g:scheme_rainbow = 1
+" }}}
+" Fugitive {{{
+
+noremap <leader>gd :Gdiff<cr>
+noremap <leader>gs :Gstatus<cr>
+noremap <leader>gb :Gblame<cr>
+
+augroup ft_fugitive
+  au!
+  au BufNewFile,BufRead .git/index setlocal nolist
+augroup END
+
+" }}}
+" tSlime plugin {{{
+
+let g:tslime_ensure_trailing_newlines = 1
+let g:tslime_normal_mapping = '<localleader>t'
+let g:tslime_visual_mapping = '<localleader>t'
+let g:tslime_vars_mapping = '<localleader>T'
+
+"}}}
+" Syntastic {{{
+
+let g:syntastic_enable_signs = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_disabled_filetypes = ['html', 'rst']
+let g:syntastic_stl_format = '[%E{%e Errors}%B{, }%W{%w Warnings}]'
+let g:syntastic_sjl_conf = '$HOME/.vim/jsl.conf'
+
+"}}}
+" Powerline {{{
+
+let g:Powerline_symbols = 'fancy'
+let g:Powerline_cache_enabled = 1
+" let g:Powerline_colorscheme = 'badwolf'
+
+" }}}
+" tComment {{{
+
+"faster shorcut for commenting. requires tComment
+map <leader>c <c-_><c-_>
+
+" }}}
+" Python-Mode {{{
+
+let g:pymode_doc = 1
+let g:pymode_doc_key = '<localleader>ds'
+let g:pydoc = 'pydoc'
+let g:pymode_syntax = 1
+" let g:pymode_syntax_all = 0
+" let g:pymode_syntax_builtin_objs = 1
+" let g:pymode_syntax_space_errors = 0
+" let g:pymode_folding = 0
+
+let g:pymode_rope = 1
+let g:pymode_rope_global_prefix = "<localleader>R"
+let g:pymode_rope_local_prefix = "<localleader>r"
 
 " }}}
 
-" Function ShowRoutes {{{
+" }}}
+" Mini-plugins ------------------------------------------------------------- {{{
+  
+" StripTrailingWhitespaces {{{
+
+nnoremap <leader>W :call <sid>StripTrailingWhitespaces()<cr>
+
+function! <sid>StripTrailingWhitespaces()
+  " preparation save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " do the business:
+  %s/\s\+$//e
+  " clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
+"}}}
+" Error Toggles {{{
+
+command! ErrorsToggle call ErrorsToggle()
+
+function! ErrorsToggle() " {{{
+  if exists("w:is_error_window")
+    unlet w:is_error_window
+    exec "q"
+  else
+    exec "Errors"
+    lopen
+    let w:is_error_window = 1
+  endif
+endfunction " }}}
+
+nmap <silent> <f3> :ErrorsToggle<cr>
+
+" }}}
+" Font-Size Toggle {{{
+
+function! <sid>FontSizeToggle()
+  if &guifont == "Inconsolata-dz for Powerline:h12"
+    set guifont=Inconsolata-dz\ for\ Powerline:h16
+  else
+    set guifont=Inconsolata-dz\ for\ Powerline:h12
+  endif
+endfunction
+
+nnoremap <leader>B :call <sid>FontSizeToggle()<cr>
+
+"}}}
+" Background Toggle {{{
+
+function! <sid>BackgroundToggle()
+  if &background == "dark"
+    set background=light
+  else
+    set background=dark
+  endif
+endfunction
+" nnoremap <leader>B :call <sid>BackgroundToggle()<cr>
+
+"}}}
+" ShowRoutes Rails {{{
+
 " thanks @garybernhardt
+map <leader>gR :call ShowRoutes()<cr>
+
 function! ShowRoutes()
   " Requires 'scratch plugin
   :topleft 50 :split __Routes__
@@ -419,144 +654,18 @@ function! ShowRoutes()
   " Delete empty trailing line
   :normal dd
 endfunction
-map <leader>gR :call ShowRoutes()<cr>
-" }}}
-
-"faster shorcut for commenting. requires tComment
-map <leader>c <c-_><c-_>
-
-"shortuct for editing vimrc file in a new
-" nmap ,ev :tabedit ~/.vim/vimrc<cr>
-
-" As see on vimcast about edit command
-cnoremap %% <C-R>=expand('%:h').'/'<cr>
-map <leader>ew :e %%
-
-" Easier navigation betwen split windows
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-
-" Switch between the currently open buffer and the previous one
-nnoremap <leader><leader> <c-^>
-
-" Space is so much easier than :
-noremap ; :
-
-" Easily move to start/end of line:
-noremap <c-a> ^
-noremap <c-e> g_
-
-" Emacs binding in command line mode
-cnoremap <c-a> <home>
-cnoremap <c-e> <end>
-
-"key mapping for tab navigation
-
-" Map hashrocket as textmate
-imap <c-l> <space>=><space>
-
-"make <c-l> clear the highlight as well as redraw
-nnoremap <leader><space> :nohls<cr>
-
-inoremap jj <esc>
-
-"I like that
-nnoremap <localleader>= ==
-vnoremap - =
-
-nnoremap <leader>W :call <sid>StripTrailingWhitespaces()<cr>
-" nnoremap <leader>B :call <sid>BackgroundToggle()<cr>
-nnoremap <leader>B :call <sid>FontSizeToggle()<cr>
-
-"--TODO
-" nnoremap <leader>Y :call <sid>ShowDate()<cr>
-
-" NERDTree {{{
-let NERDTreeHighlightCursorline=1
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-
-au FileType nerdtree setlocal nolist
-noremap <c-o> :NERDTreeToggle<cr>
-" }}}
-
-" YankRing
-let g:yankring_manual_clipboard_check = 0
-nnoremap <c-y> :YRShow<CR>
-
-" Surround
-" let g:surround_insert_tail = "<++>"
-
-" Ack
-noremap <leader>a :Ack
-
-"normal mode
-nnoremap <tab> %
-"visual mode
-vnoremap <tab> %
-
-inoremap <c-space> <c-x><c-u>
-
-" Send visual selection to gist.github.com as a private, filetyped Gist
-" Requires the gist command line too (brew install gist)
-vnoremap <leader>G :w !gist -t %:e \| pbcopy<cr>
-vnoremap <leader>UG :w !gist -p \| pbcopy<cr>
-
-" Fugitive {{{
-noremap <leader>gd :Gdiff<cr>
-noremap <leader>gs :Gstatus<cr>
-noremap <leader>gb :Gblame<cr>
-
-augroup ft_fugitive
-  au!
-  au BufNewFile,BufRead .git/index setlocal nolist
-augroup END
-" }}}
-" Guard {{{
-augroup ft_guard
-  au!
-  au BufRead,BufNewFile Guardfile set ft=ruby
-augroup END
-" }}}
-" Vagrant {{{
-augroup ft_vagrant
-  au!
-  au BufRead,BufNewFile Vagrantfile set ft=ruby
-augroup END
-" }}}
-" Vim {{{
-augroup ft_vim
-  au!
-
-  au FileType vim setlocal foldmethod=marker
-  au FileType help setlocal textwidth=78
-  au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
-augroup END
 
 " }}}
-" CursorLine {{{
-" Only show cursorline in the current window and in normal mode
-augroup cline
-  au!
-  au WinLeave * set nocursorline
-  au WinEnter * set cursorline
-  au InsertEnter * set nocursorline
-  au InsertLeave * set cursorline
-augroup END
+
 " }}}
+" Environments (GUI/Console) ----------------------------------------------- {{{
 
-" GUI Options {{{
-set background=dark
-let g:badwolf_html_link_underline=0
-colorscheme badwolf
+if has('gui_running')
+  " GUI Vim
 
-" Powerline fancy symbols
-let g:Powerline_symbols = 'fancy'
-let g:Powerline_cache_enabled = 1
+  set guifont=Menlo\ Regular\ for\ Powerline:h12
+  " set guifont=Inconsolata-dz\ for\ Powerline:h12
 
-if has("gui_macvim")
   " Remove all the UI cruft
   " go is same of guioptions
   set go-=T
@@ -565,90 +674,21 @@ if has("gui_macvim")
   set go-=r
   set go-=R
 
-  set lines=57
-  set columns=237
+  if has("gui_macvim")
 
-  " GUI
-  colorscheme codeschool
-  " set fuoptions=maxvert,maxhorz
-  " set fullscreen
-endif
-" }}}
-
-" Resize split when the window is resized
-au VimResized * exe "normal! \<c-w>="
-
-" Window rezising
-nnoremap <Left> 4<c-w>>
-nnoremap <Right> 4<c-w><
-
-"it's 2012"
-noremap j gj
-noremap k gk
-
-noremap vv ^vg_
-" Better Completion
-set completeopt=menu,preview,longest
-
-" Plugin for syntax of treetop files
-set runtimepath+=~/.vim/plugin/treetop.vim
-
-" tSlime plugin {{{
-let g:tslime_ensure_trailing_newlines = 1
-let g:tslime_normal_mapping = '<localleader>t'
-let g:tslime_visual_mapping = '<localleader>t'
-let g:tslime_vars_mapping = '<localleader>T'
-"}}}
-" Syntastic {{{
-let g:syntastic_enable_signs = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_disabled_filetypes = ['html', 'rst']
-let g:syntastic_stl_format = '[%E{%e Errors}%B{, }%W{%w Warnings}]'
-let g:syntastic_sjl_conf = '$HOME/.vim/jsl.conf'
-"}}}
-
-" Substitute
-noremap <leader>s :%s//<left>
-
-" Get off my lawn
-" nnoremap <Left> :echoe "Use h"<CR>
-" nnoremap <Right> :echoe "Use l"<CR>
-nnoremap <Up> :echoe "Use k"<CR>
-nnoremap <Down> :echoe "Use j"<CR>
-
-" Keep the cursor in place while joining lines
-nnoremap J mzJ`z
-
-" Python-Mode {{{
-
-let g:pymode_doc = 1
-let g:pymode_doc_key = '<localleader>ds'
-let g:pydoc = 'pydoc'
-let g:pymode_syntax = 1
-" let g:pymode_syntax_all = 0
-" let g:pymode_syntax_builtin_objs = 1
-" let g:pymode_syntax_space_errors = 0
-" let g:pymode_folding = 0
-
-let g:pymode_rope = 1
-let g:pymode_rope_global_prefix = "<localleader>R"
-let g:pymode_rope_local_prefix = "<localleader>r"
-" }}}
-
-" Error Toggles {{{
-
-command! ErrorsToggle call ErrorsToggle()
-function! ErrorsToggle() " {{{
-  if exists("w:is_error_window")
-    unlet w:is_error_window
-    exec "q"
+    " colorscheme codeschool
+    set fuoptions=maxvert,maxhorz
+    set fullscreen
   else
-    exec "Errors"
-    lopen
-    let w:is_error_window = 1
-  endif
-endfunction " }}}
+    " Non-MacVim GUI, like Gvim
+  end
+else
+  " Console Vim
+  " For me, this means iTerm2, possibly through tmux
 
-nmap <silent> <f3> :ErrorsToggle<cr>
+  " Mouse support
+  set mouse=a
+  set t_Co=256
+endif
 
 " }}}
